@@ -1,0 +1,4 @@
+AuthName "Authentication required"
+AuthType Basic
+AuthUserFile "/home/dwogsi/nostalgeek.org/www/slides-app-launch/.htpasswd"
+Require valid-user

@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+
+		<title>AppLaunchClientBundle</title>
+
+		<meta name="description" content="AppLaunch client bundle">
+		<meta name="author" content="Hakim El Hattab">
+
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<link rel="stylesheet" href="css/reveal.min.css">
+		<link rel="stylesheet" href="css/theme/default.css" id="theme">
+
+		<!-- For syntax highlighting -->
+		<link rel="stylesheet" href="lib/css/zenburn.css">
+
+		<!-- If the query includes 'print-pdf', include the PDF print sheet -->
+		<script>
+			if( window.location.search.match( /print-pdf/gi ) ) {
+				var link = document.createElement( 'link' );
+				link.rel = 'stylesheet';
+				link.type = 'text/css';
+				link.href = 'css/print/pdf.css';
+				document.getElementsByTagName( 'head' )[0].appendChild( link );
+			}
+		</script>
+
+		<!--[if lt IE 9]>
+		<script src="lib/js/html5shiv.js"></script>
+		<![endif]-->
+	</head>
+
+	<body>
+
+		<div class="reveal">
+
+			<!-- Any section element inside of this container is displayed as a slide -->
+			<div class="slides">
+
+				<section>
+					<h1>AppLaunch client bundle</h1>
+					<h3>Configuration d'une application Symfony au runtime</h3>
+				</section>
+
+				<section>
+					<h2>Qu'est ce que l'AppLaunch ?</h2>
+					<ul>
+						<li class="fragment">Système clés-valeurs</li>
+						<li class="fragment">Classé par projet</li>
+						<li class="fragment">Versionné</li>
+						<li class="fragment">Front JSON (http://host/myproject-1.0.1.json)</li>
+						<li class="fragment">Utilisé par les applis mobiles</li>
+					</ul>
+				</section>
+
+				<section>
+					<h2>Configurer un projet symfony via l'AppLaucnh</h2>
+					<p data-fragment-index="3" class="fragment">Pour chaque requête :</p>
+					<ul>
+						<li data-fragment-index="1" class="fragment">Aller lire l'AppLaunch</li>
+						<li data-fragment-index="2" class="fragment">Surcharger la configuration du projet</li>
+					</ul>
+				</section>
+
+				<section>
+					<h2>Lire l'AppLaunch</h2>
+					<p class="fragment">WSClient bundle</p>
+					<ul>
+						<li class="fragment">Surcourche à Guzzle</li>
+						<li class="fragment">Gére le cache (Redis, APCu, etc.)</li>
+					</ul>
+				</section>
+
+				<section>
+					<h2>Surcharge de la configuration Symfony</h2>
+					<ul>
+						<li class="fragment">Impossible au runtime</li>
+						<li class="fragment">Le container est compilé</li>
+					</ul>
+				</section>
+
+				<section>
+					<h2>Surcharge de services</h2>
+					<pre class="fragment"><code data-trim>
+services:
+    logBridge:
+        id: m6web_log_bridge.matcher
+        calls:
+            - [ setFilters, [ !api.m6_logbridge.filters ] ]
+            - [ setLogger, [ @logger ] ]
+					</code></pre>
+                	<ul>
+                		<li class="fragment">Passe de compilation</li>
+                		<li class="fragment">Alias le service (m6_video_app_launch_client.%s)</li>
+                		<li class="fragment">Recréé un service sous l'id original</li>
+                		<ul class="fragment">
+                			<li>Class du service original</li>
+                			<li>Factory</li>
+                		</ul>
+                	</ul>
+				</section>
+
+				<section>
+					<h2>Configuration complète</h2>
+					<pre><code data-trim>m6_video_app_launch_client:
+    host: 'https://d16w83149ahatb.cloudfront.net'
+    configurations:
+        api:
+            project: 'service-6play-api'
+            version: '1.0.1'
+            parameters:
+                m6_logbridge.filters:
+                    json: true
+    services:
+        logBridge:
+            id: m6web_log_bridge.matcher
+            calls:
+                - [ setFilters, [ !api.m6_logbridge.filters ] ]
+    wsclient: m6_ws_client</pre></code>
+				</section>
+
+				<section>
+					<h2>Questions ?</h2>
+				</section>
+
+			</div>
+
+		</div>
+
+		<script src="lib/js/head.min.js"></script>
+		<script src="js/reveal.min.js"></script>
+
+		<script>
+
+			// Full list of configuration options available here:
+			// https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				controls: true,
+				progress: true,
+				history: true,
+				center: true,
+
+				theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+				transition: Reveal.getQueryHash().transition || 'default', // default/cube/page/concave/zoom/linear/fade/none
+
+				// Parallax scrolling
+				// parallaxBackgroundImage: 'https://s3.amazonaws.com/hakim-static/reveal-js/reveal-parallax-1.jpg',
+				// parallaxBackgroundSize: '2100px 900px',
+
+				// Optional libraries used to extend on reveal.js
+				dependencies: [
+					{ src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+					{ src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+					{ src: 'plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+					{ src: 'plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }
+				]
+			});
+
+		</script>
+
+	</body>
+</html>
