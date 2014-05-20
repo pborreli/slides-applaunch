@@ -109,23 +109,44 @@
 				</section>
 
 				<section>
-					<section data-markdown>
-						## Sommaire
-
-						* Configuration Discovery, kezako ?
-						* Mise à disposition de configuration
-						* La configuration discovery avec Symfony
-					</section>
-				</section>
-
-				<section>
 					<section>
-						<h2>Configuration Discovery, kezako ?</h2>
+						<h2>Sommaire</h2>
+
+						<ul>
+							<li class="fragment highlight-red">Configuration Discovery, kezako ?</li>
+							<li>Mise à disposition de configuration</li>
+							<li>La configuration discovery avec Symfony</li>
+						</ul>
 					</section>
 
-					<section data-markdown>
-						* Mot parapluie
-						* Possibilité d'agir sur la configuration depuis l'extérieur du projet
+					<section>
+						<h2>Configuration Discovery</h2>
+
+						<ul>
+							<li class="fragment">Buzzword bingo</li>
+							<li class="fragment">Agir sur la configuration depuis l'extérieur du projet</li>
+							<li class="fragment">Service de surcharge de configuration externe</li>
+							<li class="fragment">Chez M6Web ?</li>
+						</ul>
+
+						<aside class="notes">
+							* buzzword
+								* Mot parapluie
+								* Chacun trouve une définition derrière ce mot
+							* Configuration
+								* Comment changer la configuration d'un projet depuis l'extérieur
+								* Sans deploy, sans BO
+								* Surcharge de la configuration, pas configuration externe
+								* Il sait tourner si ce service externe est down
+							* Service de configuration
+								* Le projet a quelques informations sur la localisation du service de configuration
+								* Il se charge de l'appeler, et d'utiliser son retour pour découvrir ce qu'il doit modifier dans sa configuration locale
+							* M6Web
+								* Debug : Augmenter ponctuellement le niveau de log
+								* Configuration : faire du "feature flipping"
+								* Très pratique en SOA et sur des architectures très scalables
+									* Inversion de la diffusion de la configuration
+						</aside>
 					</section>
 				</section>
 
