@@ -62,7 +62,10 @@
 					<section data-markdown>
 						## Thierry Geindre
 						
-						* Zol
+						![ZOL](images/presentation/zol.png)
+
+						* PHP / Symfony
+						* Déteste Twitter
 					</section>
 
 					<section data-markdown>
@@ -109,8 +112,79 @@
 				</section>
 
 				<section>
-					<section data-markdown>
-						## Configuration discovery avec Symfony
+					<section>
+						<h2>Configuration discovery avec Symfony</h2>
+						<p data-fragment-index="3" class="fragment">Pour chaque requête :</p>
+						<ul>
+							<li data-fragment-index="1" class="fragment">Lecture du flux JSON : M6Web / WSClientBundle</li>
+							<li data-fragment-index="2" class="fragment">Surcharger la configuration du projet</li>
+						</ul>
+					</section>
+
+					<section>
+						<h2>Surcharge de la configuration Symfony</h2>
+						<ul>
+							<li class="fragment">Impossible au runtime</li>
+							<li class="fragment">Le container est compilé</li>
+						</ul>
+					</section>
+
+					<section>
+						<h3>Service existant</h3>
+						<pre><code data-trim>
+services:
+  request_logger:
+    class: %request_logger.class%
+    calls:
+      - [ setLogger, [ @logger ] ]
+						</code></pre>
+						
+					</section>
+
+					<section>
+						<h3>Configuration du bundle</h3>
+						<pre><code data-trim>
+m6_video_app_launch_client:
+  services:
+    request_logger:
+      id: request_logger
+      calls:
+        - [ setFilters, [ !myconfig.request_logger.filters ] ]
+						</code></pre>
+						<ul>
+							<li class="fragment">Injection de a valeur contenue dans le json</li>
+							<li class="fragment">Transparent à l'utilisation</li>
+						</ul>
+					</section>
+
+					<section>
+						<h3>Fonctionnement</h3>
+						<ul>
+							<li class="fragment">Passe de compilation</li>
+							<li class="fragment">Alias du service original : <em>m6_applaunch.%s</em></li>
+							<li class="fragment">Recréé un service sous l'id original</li>
+							<li class="fragment">Service factory</li>
+						</ul>
+					</section>
+					<section>
+						<h3>Configuration complète</h3>
+						<pre><code data-trim>
+m6_video_app_launch_client:
+  host: 'http://host'
+  configurations:
+    myconfig:
+      project: 'project'
+      version: '1.0.1'
+      parameters:
+        request_logger.filters:
+          json: true
+  services:
+    request_logger:
+      id: request_logger
+      calls:
+        - [ setFilters, [ !myconfig.request_logger.filters ] ]
+  wsclient: m6_ws_client
+    					</pre></code>
 					</section>
 				</section>
 
@@ -120,8 +194,6 @@
 					@TechM6Web - http://tech.m6web.fr
 					
 					@mikaelrandy - http://www.mikaelrandy.fr
-					
-					[compte twitter de Thierry] - [site de Thierry] ;)
 				</section>
 
 				<section data-markdown>
@@ -132,89 +204,6 @@
 					* Méthodologie et industrialisation
 
 					[Réservez !](http://www.phptour.org)
-				</section>
-				
-				<!-- Ancienne présentation -->
-
-				<section>
-					<h2>Qu'est ce que l'AppLaunch ?</h2>
-					<ul>
-						<li class="fragment">Système clés-valeurs</li>
-						<li class="fragment">Classé par projet</li>
-						<li class="fragment">Versionné</li>
-						<li class="fragment">Front JSON (http://host/myproject-1.0.1.json)</li>
-						<li class="fragment">Utilisé par les applis mobiles</li>
-					</ul>
-				</section>
-
-				<section>
-					<h2>Configurer un projet symfony via l'AppLaucnh</h2>
-					<p data-fragment-index="3" class="fragment">Pour chaque requête :</p>
-					<ul>
-						<li data-fragment-index="1" class="fragment">Aller lire l'AppLaunch</li>
-						<li data-fragment-index="2" class="fragment">Surcharger la configuration du projet</li>
-					</ul>
-				</section>
-
-				<section>
-					<h2>Lire l'AppLaunch</h2>
-					<p class="fragment">WSClient bundle</p>
-					<ul>
-						<li class="fragment">Surcourche à Guzzle</li>
-						<li class="fragment">Gére le cache (Redis, APCu, etc.)</li>
-					</ul>
-				</section>
-
-				<section>
-					<h2>Surcharge de la configuration Symfony</h2>
-					<ul>
-						<li class="fragment">Impossible au runtime</li>
-						<li class="fragment">Le container est compilé</li>
-					</ul>
-				</section>
-
-				<section>
-					<h2>Surcharge de services</h2>
-					<pre class="fragment"><code data-trim>
-services:
-    logBridge:
-        id: m6web_log_bridge.matcher
-        calls:
-            - [ setFilters, [ !api.m6_logbridge.filters ] ]
-            - [ setLogger, [ @logger ] ]
-					</code></pre>
-                	<ul>
-                		<li class="fragment">Passe de compilation</li>
-                		<li class="fragment">Alias le service (m6_video_app_launch_client.%s)</li>
-                		<li class="fragment">Recréé un service sous l'id original</li>
-                		<ul class="fragment">
-                			<li>Class du service original</li>
-                			<li>Factory</li>
-                		</ul>
-                	</ul>
-				</section>
-
-				<section>
-					<h2>Configuration complète</h2>
-					<pre><code data-trim>m6_video_app_launch_client:
-    host: 'https://d16w83149ahatb.cloudfront.net'
-    configurations:
-        api:
-            project: 'service-6play-api'
-            version: '1.0.1'
-            parameters:
-                m6_logbridge.filters:
-                    json: true
-    services:
-        logBridge:
-            id: m6web_log_bridge.matcher
-            calls:
-                - [ setFilters, [ !api.m6_logbridge.filters ] ]
-    wsclient: m6_ws_client</pre></code>
-				</section>
-
-				<section>
-					<h2>Questions ?</h2>
 				</section>
 
 			</div>
