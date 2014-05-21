@@ -84,8 +84,14 @@
 						
 						![ZOL](images/presentation/zol.png)
 
-						* PHP / Symfony
-						* Déteste Twitter
+						<aside class="notes" data-markdown>
+							* Développeur Zol
+								* Mission depuis 7 mois chez M6Web
+							* PHP depuis longtemps
+							* Symfony
+								* Depuis la 1.4
+								* Symfony2
+						</aside>
 					</section>
 
 					<section>
@@ -168,11 +174,19 @@
 				<section>
 					<section>
 						<h2>Configuration discovery avec Symfony</h2>
-						<p data-fragment-index="3" class="fragment">Pour chaque requête :</p>
+						<p data-fragment-index="3" class="fragment">Pour chaque requête / commande :</p>
 						<ul>
 							<li data-fragment-index="1" class="fragment">Lecture du flux JSON : M6Web / WSClientBundle</li>
 							<li data-fragment-index="2" class="fragment">Surcharger la configuration du projet</li>
 						</ul>
+						<aside class="notes" data-markdown>
+							* Lecture flux Json
+							  * WsClient
+							  * On ne se soucie pas du cache
+							  * Profiling
+							* Surcharge de la configuration
+							* Pour chaque requête / commande
+						</aside>
 					</section>
 
 					<section>
@@ -181,6 +195,14 @@
 							<li class="fragment">Impossible au runtime</li>
 							<li class="fragment">Le container est compilé</li>
 						</ul>
+						<aside class="notes" data-markdown>
+							* Impossible à l'execution
+							* La configuration permet de définir (vision simple)
+							  * des parameters
+							  * des services
+							  * tout est dans le DIC
+							* le DIC est compilé , la configuration ne sera plus utilisée
+						</aside>
 					</section>
 
 					<section>
@@ -192,6 +214,12 @@ services:
     calls:
       - [ setLogger, [ @logger ] ]
 						</code></pre>
+						<aside class="notes" data-markdown>
+							* Service de log de requête
+							* Créé par quelqu'un d'autre
+							* Il log des requêtes suivant des filtres
+							* En l'état il ne log aucune requête
+						</aside>
 						
 					</section>
 
@@ -203,22 +231,49 @@ m6_video_app_launch_client:
     request_logger:
       id: request_logger
       calls:
-        - [ setFilters, [ !myconfig.request_logger.filters ] ]
+        - [ setFilters, [ !loggerconfig.filters ] ]
 						</code></pre>
 						<ul>
 							<li class="fragment">Injection de a valeur contenue dans le json</li>
 							<li class="fragment">Transparent à l'utilisation</li>
 						</ul>
+						<aside class="notes" data-markdown>
+							* Extrait de la configuration du bundle que nous avons mis au point
+							* On ajoute un call au service
+								* -> La valeur du json est injecté
+								* -> Transparent à l'utilisation
+						</aside>
 					</section>
 
 					<section>
 						<h3>Fonctionnement</h3>
+						<pre class="fragment"><code data-trim>
+services:
+  request_logger:
+    class: %request_logger.class%
+    calls:
+      - [ setLogger, [ @logger ] ]
+						</code></pre>
 						<ul>
 							<li class="fragment">Passe de compilation</li>
 							<li class="fragment">Alias du service original : <em>m6_applaunch.%s</em></li>
 							<li class="fragment">Recréé un service sous l'id original</li>
 							<li class="fragment">Service factory</li>
 						</ul>
+						<aside class="notes" data-markdown>
+							* -> Rappel du service original
+							* -> Passe de compilation
+							  * Au moment de la compilation du DIC
+							  * Une bonne fois pour toutes
+							* -> Alias
+							  * Nouveau service m6_applaunch.request_logger
+							  * Exactement la même définition que le service request_logger
+							* -> Nouveau service sous l'id original
+							  * Service factory
+							    * Appel le service sous l'id alias, m6_applaunch.request_logger
+							    * Applique les call
+							    * Retourne le service
+							    * Si un des appels ne peut être réalisé, on en fait aucun
 					</section>
 					<section>
 						<h3>Configuration complète</h3>
@@ -226,20 +281,27 @@ m6_video_app_launch_client:
 m6_video_app_launch_client:
   host: 'http://host'
   configurations:
-    myconfig:
-      project: 'project'
-      version: '1.0.1'
+    loggerconfig:
+      project: 'request_logger'
+      version: '1.0.0'
       parameters:
-        request_logger.filters:
+        filters:
           json: true
   services:
     request_logger:
       id: request_logger
       calls:
-        - [ setFilters, [ !myconfig.request_logger.filters ] ]
+        - [ setFilters, [ !loggerconfig.filters ] ]
   wsclient: m6_ws_client
     					</pre></code>
+						<aside class="notes" data-markdown>
+							* host, project et version servent à forger l'url du json
+							* parameters permet de définir si certain éléments contiennent du json (json_decode)
+							* on reprend la même clé dans l'injection de parametre que dans la config
+							* on lui donne le wsclient à utiliser
+						</aside>
 					</section>
+
 				</section>
 
 				<section data-markdown>
