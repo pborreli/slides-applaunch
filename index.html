@@ -8,7 +8,7 @@
 
 		<meta name="description" content="Mise en place du principe de Configuration Discovery sur des projets Symfony2 chez M6Web">
 		<meta name="author" content="Mikael Randy">
-		<meta name="author" content="Thierry Geindre"
+		<meta name="author" content="Thierry Geindre">
 
 		<meta name="apple-mobile-web-app-capable" content="yes" />
 		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
@@ -360,6 +360,7 @@ services:
 							    * Applique les call
 							    * Retourne le service
 							    * Si un des appels ne peut être réalisé, on en fait aucun
+						</aside>
 					</section>
 					<section>
 						<h3>Configuration complète</h3>
@@ -379,7 +380,7 @@ m6_video_app_launch_client:
       calls:
         - [ setFilters, [ !loggerconfig.filters ] ]
   wsclient: m6_ws_client
-    					</pre></code>
+						</code></pre>
 						<aside class="notes" data-markdown>
 							* host, project et version servent à forger l'url du json
 							* parameters permet de définir si certain éléments contiennent du json (json_decode)
