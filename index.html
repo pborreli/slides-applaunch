@@ -118,56 +118,142 @@
 				</section>
 
 				<section>
+					<h2>Sommaire</h2>
+
+					<ul>
+						<li>Configuration Discovery, kezako ?</li>
+						<li>Mise à disposition de configuration</li>
+						<li>M6Web/WsClientBundle, M6Web/RedisBundle</li>
+						<li>La configuration discovery avec Symfony</li>
+					</ul>
+				</section>
+
+				<section>
+					<h2>Configuration Discovery</h2>
+
+					<ul>
+						<li class="fragment">Buzzword bingo</li>
+						<li class="fragment">Agir sur la configuration depuis l'extérieur du projet</li>
+						<li class="fragment">Service de surcharge de configuration externe</li>
+						<li class="fragment">Chez M6Web ?</li>
+					</ul>
+
+					<aside class="notes" data-markdown>
+						* buzzword
+							* Mot parapluie
+							* Chacun trouve une définition derrière ce mot
+						* Configuration
+							* Comment changer la configuration d'un projet depuis l'extérieur
+							* Sans deploy, sans BO
+							* Surcharge de la configuration, pas configuration externe
+							* Il sait tourner si ce service externe est down
+						* Service de configuration
+							* Le projet a quelques informations sur la localisation du service de configuration
+							* Il se charge de l'appeler, et d'utiliser son retour pour découvrir ce qu'il doit modifier dans sa configuration locale
+						* M6Web
+							* Debug : Augmenter ponctuellement le niveau de log
+							* Configuration : faire du "feature flipping"
+							* Très pratique en SOA et sur des architectures très scalables
+								* Inversion de la diffusion de la configuration
+					</aside>
+				</section>
+
+				<section>
 					<section>
-						<h2>Sommaire</h2>
+						<h2>Mise à disposition de la configuration</h2>
 
 						<ul>
-							<li class="fragment highlight-red">Configuration Discovery, kezako ?</li>
-							<li>Mise à disposition de configuration</li>
-							<li>La configuration discovery avec Symfony</li>
+							<li>Accessible via HTTP</li>
+							<li>Configuration complexe</li>
+							<li>Plusieurs configuration</li>
+							<li>=> Format JSON</li>
 						</ul>
+
+						<aside class="notes" data-markdown>
+							* Accessible via HTTP
+								* Simple à mettre en place
+								* cachable, headers, status
+							* Configuration complexe
+								* être capable de gérer des sous-éléments complexe
+							* Plusieurs configuration
+								* Il faut être capable de gérer toutes les clés de configuration du projet
+							* => Sur le modèle de la configuration Symfony
+						</aside>
 					</section>
 
 					<section>
-						<h2>Configuration Discovery</h2>
+						<h2>AppLaunch</h2>
 
-						<ul>
-							<li class="fragment">Buzzword bingo</li>
-							<li class="fragment">Agir sur la configuration depuis l'extérieur du projet</li>
-							<li class="fragment">Service de surcharge de configuration externe</li>
-							<li class="fragment">Chez M6Web ?</li>
-						</ul>
-
-						<aside class="notes">
-							* buzzword
-								* Mot parapluie
-								* Chacun trouve une définition derrière ce mot
-							* Configuration
-								* Comment changer la configuration d'un projet depuis l'extérieur
-								* Sans deploy, sans BO
-								* Surcharge de la configuration, pas configuration externe
-								* Il sait tourner si ce service externe est down
-							* Service de configuration
-								* Le projet a quelques informations sur la localisation du service de configuration
-								* Il se charge de l'appeler, et d'utiliser son retour pour découvrir ce qu'il doit modifier dans sa configuration locale
-							* M6Web
-								* Debug : Augmenter ponctuellement le niveau de log
-								* Configuration : faire du "feature flipping"
-								* Très pratique en SOA et sur des architectures très scalables
-									* Inversion de la diffusion de la configuration
-						</aside>
+						<img src="images/applaunch/bo.png" alt="AppLaunch - BO" />
+						<img src="images/applaunch/json.png" alt="AppLaunch - JSON" />
 					</section>
 				</section>
 
 				<section>
-					<section data-markdown>
-						## Mise à disposition de configuration
+					<section>
+						<h2>M6Web/WsClientBundle, M6Web/RedisBundle</h2>
+
+						<aside class="notes" data-markdown>
+							* 2 bundles M6Web
+							* Permet de préparer ce qui a va être dit
+							* Publics
+						</aside>
 					</section>
 
-					<section data-markdown>
-						* AppLaunch
-						* Permettre d'accèder à un flux via une URL
-						* Format JSON
+					<section>
+						<h3>M6Web/RedisBundle</h3>
+
+						<p><a href="https://github.com/M6Web/RedisBundle">https://github.com/M6Web/RedisBundle</a></p>
+
+						<p>Basé sur le composant <a href="https://github.com/M6Web/Redis">M6Web/Redis</a></p>
+						<br />
+						<ul>
+							<li>Configuration</li>
+							<li>Event dispatching</li>
+							<li>Session handler</li>
+							<li>Guzzle cache</li>
+							<li>Web profiler toolbar</li>
+							<li class="fragment highlight-red visible">Cache resetter</li>
+						</ul>
+
+						<aside class="notes" data-markdown>
+							* Configuration
+								* Paramétrage à la sauce Symfony
+							* Event dispatching
+								* Brancher facilement des événements sur Redis
+								* Graphite chez nous
+							* Session handler
+								* Redis est scalable, pas memcache
+							* Web profiler toolbar
+								* Voir les actions, les temps de réponse, ...
+							* Cache reseter
+								* Pouvoir délocaliser la détection de la validité du cache
+							* Guzzle cache
+								* Placer dans Redis la response Guzzle pour que, sur une nouvelle
+						</aside>
+					</section>
+
+					<section>
+						<h3>M6Web/WsClientBundle</h3>
+
+						<p><a href="https://github.com/M6Web/WsClientBundle">https://github.com/M6Web/WsClientBundle</a></p>
+						<br />
+						<ul>
+							<li>Abstraction appels HTTP</li>
+							<li>Possibilité d'ajouter un handler de cache</li>
+							<li>Intégration complète dans le web profiler toolbar</li>
+						</ul>
+
+						<aside class="notes">
+							* Bundle Public, sur packagist
+							* Abstraction d'appels de webservice HTTP
+								* Actuellement, uniquement un adapter Guzzle
+							* Cache
+								* Permet d'installer une couche de cache
+								* Adapter Redis, qui permet de scaler
+							* Intégration Debug Center
+								* Actions, temps de réponse
+						</aside>
 					</section>
 				</section>
 
